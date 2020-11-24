@@ -2,8 +2,8 @@ package mydynamo
 
 import (
 	"fmt"
+	"log"
 	"net/rpc"
-    "log"
 )
 
 type RPCClient struct {
@@ -39,7 +39,6 @@ func (dynamoClient *RPCClient) RpcConnect() error {
 	return e
 }
 
-
 //Removes and re-establishes an RPC connection to the server
 func (dynamoClient *RPCClient) CleanAndConn() error {
 	var e error
@@ -59,61 +58,60 @@ func (dynamoClient *RPCClient) CleanAndConn() error {
 	return e
 }
 
-//Puts a value to the server. 
+//Puts a value to the server.
 func (dynamoClient *RPCClient) Put(value PutArgs) bool {
-    var result bool
-    if(dynamoClient.rpcConn == nil){
-        return false
-    }
-    err := dynamoClient.rpcConn.Call("MyDynamo.Put", value, &result)
-    if err != nil {
-        log.Println(err)
-        return false
-    }
-    return result
+	var result bool
+	if dynamoClient.rpcConn == nil {
+		return false
+	}
+	err := dynamoClient.rpcConn.Call("MyDynamo.Put", value, &result)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	return result
 }
 
 //Gets a value from a server.
 func (dynamoClient *RPCClient) Get(key string) *DynamoResult {
-    var result DynamoResult
-    if(dynamoClient.rpcConn == nil){
-        return nil
-    }
-    err := dynamoClient.rpcConn.Call("MyDynamo.Get", key, &result)
-    if err != nil {
-        log.Println(err)
-        return nil
-    }
-    return &result
+	var result DynamoResult
+	if dynamoClient.rpcConn == nil {
+		return nil
+	}
+	err := dynamoClient.rpcConn.Call("MyDynamo.Get", key, &result)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	return &result
 }
 
 //Emulates a crash on the server this client is connected to
 func (dynamoClient *RPCClient) Crash(seconds int) bool {
-    if dynamoClient.rpcConn == nil {
-        return false
-    }
-    var success bool
-    err := dynamoClient.rpcConn.Call("MyDynamo.Crash", seconds, &success)
-    if err != nil {
-        log.Println(err)
-        return false
-    }
-    return success
+	if dynamoClient.rpcConn == nil {
+		return false
+	}
+	var success bool
+	err := dynamoClient.rpcConn.Call("MyDynamo.Crash", seconds, &success)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	return success
 }
 
 //Instructs the server this client is connected to gossip
 func (dynamoClient *RPCClient) Gossip() {
-    if dynamoClient.rpcConn == nil {
-        return
-    }
-    var v Empty
-    err := dynamoClient.rpcConn.Call("MyDynamo.Gossip", v, &v)
-    if err != nil {
-        log.Println(err)
-        return
-    }
+	if dynamoClient.rpcConn == nil {
+		return
+	}
+	var v Empty
+	err := dynamoClient.rpcConn.Call("MyDynamo.Gossip", v, &v)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }
-
 
 //Creates a new DynamoRPCClient
 func NewDynamoRPCClient(serverAddr string) *RPCClient {
@@ -122,5 +120,3 @@ func NewDynamoRPCClient(serverAddr string) *RPCClient {
 		rpcConn:    nil,
 	}
 }
-
-

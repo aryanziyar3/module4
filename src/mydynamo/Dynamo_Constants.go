@@ -20,4 +20,3 @@ const SERVER_PORT string = "starting_port"
 const W_VALUE string = "w_value"
 const R_VALUE string = "r_value"
 const CLUSTER_SIZE string = "cluster_size"
-
